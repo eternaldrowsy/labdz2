@@ -5,105 +5,104 @@
 
 #include <algorithm>
 #include <vector>
-TEST(unordered_map, Construct) {
-  // initializer list constructor
-  unordered_map<std::string, int> ans1;
-  ans1 = {"hello", 2};
-  unordered_map<std::string> first({"world", "hello"});
-  EXPECT_EQ(first, ans1);
+
+TEST(Unordered_Map, Construct) {
   // empty constructor
-  unordered_map<int> ans2, second;
-  EXPECT_EQ(second, ans2);
+  unordered_map<int, std::string> ans2, second;
+  EXPECT_EQ(ans2.empty(), second.empty());
   // copy constructor
-  unordered_map<int> ans3({1, 2, 33, 44, 55, -6}), third(ans3);
+  std::pair<int,int> b = std::make_pair(1, 2);
+  unordered_map<int, int> ans3({b}), third(ans3);
   EXPECT_EQ(third, ans3);
+  // initializer list constructor
+  unordered_map<int,int> c {std::make_pair(1, 2), std::make_pair(1, 2), std::make_pair(1, 2)};
+  unordered_map<int,int> d {std::make_pair(1, 2), std::make_pair(1, 2), std::make_pair(1, 2)};
+  EXPECT_EQ(c, d);
 }
-TEST(unordered_map, Assign) {
+
+TEST(Unordered_Map, Assign) {
   // assign
-  unordered_map<int> ans, first({-1, 44, -3, 9}), l(first);
+  unordered_map<int, int> ans, first({std::make_pair(1, 44), std::make_pair(-1, 44)}), l(first);
   ans = l;
   EXPECT_EQ(first, ans);
 }
-TEST(unordered_map, Size) {
+
+TEST(Unordered_Map, Size) {
   // size
-  unordered_map<char> first;
+  unordered_map<char, int> first;
   EXPECT_EQ(first.size(), 0);
-  first.insert({1, 2, 3, 0, -9});
-  EXPECT_EQ(first.size(), 5);
+  first.insert({std::make_pair('1', 30), std::make_pair('2', 40), std::make_pair('1', 50)});
+  EXPECT_EQ(first.size(), 3);
 }
-TEST(unordered_map, Empty) {
+
+TEST(Unordered_Map, Empty) {
   // empty
-  unordered_map<char> first;
+  unordered_map<std::string, int> first;
   EXPECT_TRUE(first.empty());
-  first.insert(69);
+  first.insert(std::make_pair("HaHaHA", 40));
   EXPECT_FALSE(first.empty());
 }
-TEST(unordered_map, Has) {
-  // has
-  unordered_map<int> first = {1, 2, 3};
-  EXPECT_FALSE(first.has(99));
-  first.insert(99);
-  EXPECT_TRUE(first.has(99));
+
+TEST(Unordered_Map, Operator_) {
+  // operator[]
+  unordered_map<int,int> c {std::make_pair(1, 2)};
+  EXPECT_EQ((c[std::make_pair(1, 2)]).second, 2);
+  unordered_map<int,int> a {std::make_pair(2, 2)};
+  EXPECT_EQ((a[std::make_pair(1, 2)]).second, 2);
 }
-TEST(unordered_map, Insert) {
-  unordered_map<int> ans = {-1, 3, 5, 7, 8, -2}, ans2 = {-1, 3, 5, 9, 7, 8, -2},
-                     ans3 = {-1, 3, 5, 7, 8, -2, 9, 111, 222, 333}, first;
-  unordered_map<std::string> ans4 = {"hello", "world", "[24 hour cinderella]"},
-                             second;
-  std::vector<std::string> v1 = {"hello", "world", "[24 hour cinderella]"};
-  // insert with iterators range
-  first.insert(ans.begin(), ans.end());
-  EXPECT_EQ(first, ans);
-  // insert an existing value -> no changes
-  first.insert(5);
-  EXPECT_EQ(first, ans);
-  // insert new value
-  first.insert(9);
-  EXPECT_EQ(first, ans2);
+TEST(Unordered_Map, At) {
+  // at
+  unordered_map<int,int> c {std::make_pair(1, 2)};
+  EXPECT_THROW(c.at(std::make_pair(2, 2)), std::exception);
+  EXPECT_EQ((*(&c.at(std::make_pair(1, 2)))).second, 2);
+}
+
+TEST(Unordered_Set, Insert) {
   // insert with initializer list
-  first.insert({111, 222, 333});
-  EXPECT_EQ(first, ans3);
-  // insert with iterators range, different iterator type
-  second.insert(v1.begin(), v1.end());
-  EXPECT_EQ(second, ans4);
+  unordered_map<char, int> first, second = {std::make_pair('1', 30), std::make_pair('2', 40), std::make_pair('1', 50)};
+  first.insert({std::make_pair('1', 30), std::make_pair('2', 40), std::make_pair('1', 50)});
+  EXPECT_EQ(first, second);
+  unordered_map<char, int> third = {std::make_pair('1', 30), std::make_pair('2', 40), std::make_pair('1', 50), std::make_pair('6', 30)};
+  // insert new value
+  first.insert({std::make_pair('6', 30)});
+  EXPECT_EQ(first, third);
+  // insert an existing value -> no changes
+  first.insert({std::make_pair('6', 30)});
+  EXPECT_EQ(first, third);
 }
-TEST(unordered_map, Erase) {
-  unordered_map<int> first = {-1, 3, 5, 7, 8, -2};
+
+TEST(Unordered_Set, Erase) {
+  unordered_map<int, int> first = {std::make_pair(1, 2), std::make_pair(2, 3), std::make_pair(3, 10)};
   // erase by value
-  EXPECT_TRUE(first.has(-2));
-  first.erase(-2);
-  EXPECT_FALSE(first.has(-2));
+  EXPECT_TRUE(first.has(std::make_pair(1, 2)));
+  first.erase(std::make_pair(1, 2));
+  EXPECT_FALSE(first.has(std::make_pair(1, 2)));
   // erase by iterator
-  EXPECT_TRUE(first.has(8));
-  first.erase(first.find(8));
-  EXPECT_FALSE(first.has(8));
+  EXPECT_TRUE(first.has(std::make_pair(2, 3)));
+  first.erase(first.find(std::make_pair(2, 3)));
+  EXPECT_FALSE(first.has(std::make_pair(2, 3)));
 }
-TEST(unordered_map, Clear) {
+TEST(Unordered_Set, Clear) {
   // clear
-  unordered_map<int> first = {-1, 3, 5, 7, 8, -2};
+  unordered_map<int, std::string> first = {std::make_pair(1, "30"), std::make_pair(2, "30"), std::make_pair(3, "30")};
   EXPECT_FALSE(first.empty());
   first.clear();
   EXPECT_TRUE(first.empty());
 }
-TEST(unordered_map, Swap) {
+
+TEST(Unordered_Set, Swap) {
   // swap
-  unordered_map<int> first = {-1, 3, 5, 7, 8, -2}, second(first), ans(first);
-  second.insert({99, 101});
+  unordered_map<char, int> first = {std::make_pair('1', 3), std::make_pair('5', 7), std::make_pair('8', -2)}, second(first), ans(first);
+  second.insert({'9', 101});
   swap(first, second);
   EXPECT_EQ(second, ans);
 }
-TEST(unordered_map, Find) {
-  // find
-  unordered_map<int> first = {1, 2, 3};
-  EXPECT_EQ(first.find(101), first.end());
-  EXPECT_EQ(*first.find(2), 2);
-  first.insert(101);
-  EXPECT_EQ(*first.find(101), 101);
-}
 
-TEST(unordered_map, STL) {
-  unordered_map<int> first = {1, 11, 3, 5, 4, 7, 9};
-  EXPECT_EQ(*std::find_if(first.begin(), first.end(),
-                          [](int val) { return val % 2 == 0; }),
-            4);
+TEST(Unordered_Set, Find) {
+  // find
+  unordered_map<int, int> first = {std::make_pair(1, 2), std::make_pair(2, 3), std::make_pair(3, 10)};
+  EXPECT_EQ(first.find(std::make_pair(10, 2)), first.end());
+  EXPECT_EQ((*first.find(std::make_pair(1, 2))).second, 2);
+  first.insert(std::make_pair(10, 2));
+  EXPECT_EQ((*first.find(std::make_pair(10, 2))).second, 2);
 }

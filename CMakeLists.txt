@@ -34,7 +34,7 @@ find_package(GTest CONFIG REQUIRED)
 add_library(${PROJECT_NAME} STATIC
   # enum your files and delete this comment
         ${CMAKE_CURRENT_SOURCE_DIR}/sources/unordered_map.cpp
-        sources/example.cpp include/tests.hpp include/hash.hpp)
+        sources/example.cpp include/hash.hpp)
 
 add_executable(demo
   ${CMAKE_CURRENT_SOURCE_DIR}/demo/main.cpp
